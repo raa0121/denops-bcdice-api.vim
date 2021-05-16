@@ -32,6 +32,11 @@ main(async ({ vim }) => {
     async game_system_info(text: unknown): Promise<void> {
       ensureString(text, "text");
       const id = await Promise.resolve(text);
+      const systems = await api.get(`game_system`).json<apiTypes.GameSystemRes>();
+      if (false === systems.game_system.some((v) => v.id == id)) {
+        console.error(`${id} is not available.`);
+        return;
+      }
       const result = await api.get(`game_system/${id}`).json<apiTypes.GameSystemInfoRes>();
       let lines = [result.name, ""];
       lines = lines.concat(result.help_message.split(/\n/));
