@@ -1,16 +1,16 @@
-import { Vim } from "../deps.ts"
+import { Denops } from "../deps.ts"
 
-export async function open(vim: Vim, bufname: string): Promise<number> {
-  let bufnr = await vim.call("bufnr", bufname) as number;
+export async function open(denops: Denops, bufname: string): Promise<number> {
+  let bufnr = await denops.call("bufnr", bufname) as number;
   if (bufnr === -1) {
-    await vim.cmd(`execute 'edit' fnameescape(bufname)`, { bufname });
-    bufnr = await vim.call("bufnr", bufname) as number;
+    await denops.cmd(`execute 'edit' fnameescape(bufname)`, { bufname });
+    bufnr = await denops.call("bufnr", bufname) as number;
   }
   return bufnr;
 }
 
-export async function append(vim: Vim, bufnr: number, text: string|string[]) : Promise<void> {
-  const buflines = await vim.call("getbufline", bufnr, 1, '$') as string[];
+export async function append(denops: Denops, bufnr: number, text: string|string[]) : Promise<void> {
+  const buflines = await denops.call("getbufline", bufnr, 1, '$') as string[];
   let bufline = 0;
   if (buflines.length === 1 && buflines[0] !== "") {
     bufline = buflines.length
@@ -18,16 +18,16 @@ export async function append(vim: Vim, bufnr: number, text: string|string[]) : P
   if (buflines.length !== 1) {
     bufline = buflines.length
   }
-  await vim.call("setbufline", bufnr, bufline + 1, text);
+  await denops.call("setbufline", bufnr, bufline + 1, text);
 }
 
-export async function update(vim : Vim, bufnr: number) : Promise<void> {
+export async function update(denops : Denops, bufnr: number) : Promise<void> {
   await Promise.all([
-    vim.call("setbufvar", bufnr, "&buftype", "nofile"),
-    vim.call("setbufvar", bufnr, "&bufhidden", "wipe"),
-    vim.call("setbufvar", bufnr, "&swapfile", 0),
-    vim.call("setbufvar", bufnr, "&backup", 0),
-    vim.call("setbufvar", bufnr, "&foldenable", 0),
-    vim.call("setbufvar", bufnr, "&filetype", "bcdice-api-result"),
+    denops.call("setbufvar", bufnr, "&buftype", "nofile"),
+    denops.call("setbufvar", bufnr, "&bufhidden", "wipe"),
+    denops.call("setbufvar", bufnr, "&swapfile", 0),
+    denops.call("setbufvar", bufnr, "&backup", 0),
+    denops.call("setbufvar", bufnr, "&foldenable", 0),
+    denops.call("setbufvar", bufnr, "&filetype", "bcdice-api-result"),
   ]);
 }
